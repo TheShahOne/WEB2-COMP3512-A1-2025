@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
   <head>
-    <title>Assignment 1</title>
+    <title>Assignment 1 Web/title>
   </head>
   <body>
     <h1>Assignment 1 First Commit</h1>
