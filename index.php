@@ -26,10 +26,9 @@
         <?php
           $users = getAllUsers();
           foreach ($users as $u) {
-            $fullName = urlencode($u["firstname"] . " " . $u["lastname"]);
-            echo "<li><a class='customer-btn' href='?selected=$fullName'>"
-                . htmlspecialchars($u["firstname"] . " " . $u["lastname"])
-                . "</a></li>";
+            $fullName = htmlspecialchars($u["firstname"] . " " . $u["lastname"]);
+            $encodedName = urlencode($fullName);
+            echo "<li><a class='customer-btn' href='?selected=$encodedName'>$fullName</a></li>";
           }
         ?>
       </ul>

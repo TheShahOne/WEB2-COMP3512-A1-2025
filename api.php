@@ -21,10 +21,10 @@
 
   <h1>APIs Tester</h1>
   <ul>
-    <li><a href="api/companies.php">All Companies</a></li>
-    <li><a href="api/companies.php?ref=ads">Specific company (ADS used in this example link)</a></li>
-    <li><a href="api/portfolio.php?ref=8">Portfolio for User 8</a></li>
-    <li><a href="api/history.php?ref=ADS">History for Company ADS</a></li>
+    <li><a href="api/companies.php">Returns all companies (/api/companies.php)</a></li>
+    <li><a href="api/companies.php?ref=ads">Returns just the specified company (/api/companies.php?ref=ads)</a></li>
+    <li><a href="api/portfolio.php?ref=8">Returns the portfolio info for the specified user (/api/portfolio.php?ref=8)</a></li>
+    <li><a href="api/history.php?ref=ADS">Returns the history information for the specified company, sorted by ascending date (/api/history?ref=ads)</a></li>
   </ul>
 </body>
 </html>
