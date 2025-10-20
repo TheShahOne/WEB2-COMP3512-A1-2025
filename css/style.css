@@ -280,3 +280,38 @@ body {
   color: #777;
   margin-top: 10px;
 }
+
+.about-page {
+  padding: 40px 60px;
+  background-color: #f8f8f8;
+  min-height: calc(100vh - 60px);
+}
+
+.about-content {
+  background-color: #fff;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  padding: 30px 40px;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+  max-width: 700px;
+}
+
+.about-content h2 {
+  margin-top: 0;
+  color: #000;
+}
+
+.about-content p {
+  font-size: 1rem;
+  line-height: 1.5;
+  margin: 10px 0;
+}
+
+.about-content a {
+  color: #ff7301;
+  text-decoration: none;
+}
+
+.about-content a:hover {
+  text-decoration: underline;
+}
