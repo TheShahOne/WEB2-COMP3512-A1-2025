@@ -22,74 +22,72 @@
   <main class="main-content">
     <section class="customer-list">
       <h2>Customers</h2>
-      <ul>
-    <?php
-      $users = getAllUsers();
-      foreach ($users as $u) {
-        $fullName = urlencode($u["firstname"] . " " . $u["lastname"]);
-        echo "<li><a class='customer-btn' href='?selected=$fullName'>"
-            . htmlspecialchars($u["firstname"] . " " . $u["lastname"])
-            . "</a></li>";
-      }
-    ?>
-  </ul>
-</section>
+      <ul class="customer-ul">
+        <?php
+          $users = getAllUsers();
+          foreach ($users as $u) {
+            $fullName = urlencode($u["firstname"] . " " . $u["lastname"]);
+            echo "<li><a class='customer-btn' href='?selected=$fullName'>"
+                . htmlspecialchars($u["firstname"] . " " . $u["lastname"])
+                . "</a></li>";
+          }
+        ?>
+      </ul>
+    </section>
 
-<section class="customer-info">
-  <h2>Selected Customer</h2>
+    <section class="customer-info">
+      <?php
+        if (isset($_GET['selected'])) {
+            $name = $_GET['selected'];
+            echo "<h2>" . htmlspecialchars($name) . "</h2>";
 
-  <?php
-    if (isset($_GET['selected'])) {
-        $name = $_GET['selected'];
-        echo "<p><strong>" . htmlspecialchars($name) . "</strong></p>";
+            $pdo = getPDO();
+            $stmt = $pdo->prepare("SELECT id FROM users WHERE firstname || ' ' || lastname = ?");
+            $stmt->execute([$name]);
+            $user = $stmt->fetch(PDO::FETCH_ASSOC);
+            $pdo = null;
 
-        $pdo = getPDO();
-        $stmt = $pdo->prepare("SELECT id FROM users WHERE firstname || ' ' || lastname = ?");
-        $stmt->execute([$name]);
-        $user = $stmt->fetch(PDO::FETCH_ASSOC);
-        $pdo = null;
+            if ($user) {
+                $userId = $user['id'];
+                $summary = getUserPortfolioSummary($userId);
+                $details = getUserPortfolioDetails($userId);
 
-        if ($user) {
-            $userId = $user['id'];
-            $summary = getUserPortfolioSummary($userId);
-            $details = getUserPortfolioDetails($userId);
+                echo "<div class='summary-grid customer-summary'>
+                        <div class='summary-box'><strong>Companies:</strong> <span>" . htmlspecialchars($summary['company_count']) . "</span></div>
+                        <div class='summary-box'><strong>Total Shares:</strong> <span>" . htmlspecialchars($summary['total_shares']) . "</span></div>
+                        <div class='summary-box'><strong>Total Value:</strong> <span>$" . number_format($summary['total_value'], 2) . "</span></div>
+                      </div>";
 
-            echo "<p>Companies (count of records): " . $summary['company_count'] . "</p>";
-            echo "<p># shares (sum of portfolio amount field): " . $summary['total_shares'] . "</p>";
-            echo "<p>Total Value: $" . number_format($summary['total_value'], 2) . "</p>";
-
-            echo "<table border='1' cellpadding='6'>
-                    <tr>
-                      <th>Symbol</th>
-                      <th>Name</th>
-                      <th>Sector</th>
-                      <th>Amount</th>
-                      <th>Value</th>
-                    </tr>";
-           foreach ($details as $row) {
-    $symbol = htmlspecialchars($row['symbol']);
-    $name = htmlspecialchars($row['name']);
-    echo "<tr>
-            <td><a class='link-symbol' href='company.php?symbol=$symbol'>$symbol</a></td>
-            <td><a class='link-name' href='company.php?symbol=$symbol'>$name</a></td>
-            <td>{$row['sector']}</td>
-            <td>{$row['amount']}</td>
-            <td>$" . number_format($row['value'], 2) . "</td>
-          </tr>";
-}
-
-            echo "</table>";
+                echo "<h3>Portfolio Details</h3>";
+                echo "<div class='history-scroll'>
+                        <table class='data-table'>
+                          <tr>
+                            <th>Symbol</th>
+                            <th>Name</th>
+                            <th>Sector</th>
+                            <th>Amount</th>
+                            <th>Value</th>
+                          </tr>";
+                foreach ($details as $row) {
+                    $symbol = htmlspecialchars($row['symbol']);
+                    $name = htmlspecialchars($row['name']);
+                    echo "<tr>
+                            <td><a class='link-symbol' href='company.php?symbol=$symbol'>$symbol</a></td>
+                            <td><a class='link-name' href='company.php?symbol=$symbol'>$name</a></td>
+                            <td>{$row['sector']}</td>
+                            <td>{$row['amount']}</td>
+                            <td>$" . number_format($row['value'], 2) . "</td>
+                          </tr>";
+                }
+                echo "</table></div>";
+            } else {
+                echo "<p>User not found.</p>";
+            }
         } else {
-            echo "<p>User not found.</p>";
+            echo "<p class='no-selection'>Click a customer to view details.</p>";
         }
-    } else {
-        echo "<p>Click a customer to view details.</p>";
-    }
-  ?>
-</section>
-
-
-    
+      ?>
+    </section>
   </main>
 </body>
 </html>

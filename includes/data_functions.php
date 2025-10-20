@@ -3,11 +3,12 @@ require_once('config.inc.php');
 
 function getAllUsers() {
     $pdo = getPDO();
-    $sql = "SELECT firstname, lastname FROM users";
+    $sql = "SELECT firstname, lastname FROM users ORDER BY lastname ASC";
     $result = $pdo->query($sql)->fetchAll(PDO::FETCH_ASSOC);
     $pdo = null;
     return $result;
 }
+
 
 function getAllCompanies() {
     $pdo = getPDO();
@@ -47,7 +48,6 @@ function getHistoryBySymbol($symbol) {
     return $result;
 }
 
-// Returns all portfolio rows joined with company info and the latest closing price
 function getUserPortfolioDetails($userId) {
     $pdo = getPDO();
     $sql = "
@@ -97,6 +97,47 @@ function getUserPortfolioSummary($userId) {
     ";
     $stmt = $pdo->prepare($sql);
     $stmt->execute([$userId]);
+    $result = $stmt->fetch(PDO::FETCH_ASSOC);
+    $pdo = null;
+    return $result;
+}
+
+function getCompanyBySymbolFull($symbol) {
+    $pdo = getPDO();
+    $sql = "SELECT symbol, name, sector, subindustry, address, exchange, website, description, financials
+            FROM companies
+            WHERE UPPER(symbol) = UPPER(?)";
+    $stmt = $pdo->prepare($sql);
+    $stmt->execute([$symbol]);
+    $result = $stmt->fetch(PDO::FETCH_ASSOC);
+    $pdo = null;
+    return $result;
+}
+
+function getCompanyHistory($symbol) {
+    $pdo = getPDO();
+    $sql = "SELECT date, volume, open, close, high, low
+            FROM history
+            WHERE UPPER(symbol) = UPPER(?)
+            ORDER BY date DESC";
+    $stmt = $pdo->prepare($sql);
+    $stmt->execute([$symbol]);
+    $result = $stmt->fetchAll(PDO::FETCH_ASSOC);
+    $pdo = null;
+    return $result;
+}
+
+function getCompanyHistorySummary($symbol) {
+    $pdo = getPDO();
+    $sql = "SELECT 
+                MAX(high) AS history_high,
+                MIN(low) AS history_low,
+                SUM(volume) AS total_volume,
+                AVG(volume) AS avg_volume
+            FROM history
+            WHERE UPPER(symbol) = UPPER(?)";
+    $stmt = $pdo->prepare($sql);
+    $stmt->execute([$symbol]);
     $result = $stmt->fetch(PDO::FETCH_ASSOC);
     $pdo = null;
     return $result;
