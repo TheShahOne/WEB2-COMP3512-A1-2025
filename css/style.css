@@ -62,3 +62,30 @@ body {
   padding: 20px;
   box-sizing: border-box;
 }
+
+.customer-btn {
+  display: inline-block;
+  background-color: #444;
+  color: white;
+  text-decoration: none;
+  padding: 8px 14px;
+  margin: 4px 0;
+  border-radius: 4px;
+  transition: background-color 0.2s;
+  font-family: Tahoma, sans-serif;
+}
+
+.customer-btn:hover {
+  background-color: #666;
+}
+
+.link-symbol,
+.link-name {
+  color: #3aa0ff;
+  text-decoration: none;
+}
+
+.link-symbol:hover,
+.link-name:hover {
+  text-decoration: underline;
+}

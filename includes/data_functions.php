@@ -46,4 +46,60 @@ function getHistoryBySymbol($symbol) {
     $pdo = null;
     return $result;
 }
+
+// Returns all portfolio rows joined with company info and the latest closing price
+function getUserPortfolioDetails($userId) {
+    $pdo = getPDO();
+    $sql = "
+        SELECT 
+            p.symbol,
+            c.name,
+            c.sector,
+            p.amount,
+            h.close AS latest_close,
+            (p.amount * h.close) AS value
+        FROM portfolio p
+        JOIN companies c ON p.symbol = c.symbol
+        JOIN (
+            SELECT symbol, MAX(date) AS max_date
+            FROM history
+            GROUP BY symbol
+        ) latest ON p.symbol = latest.symbol
+        JOIN history h 
+            ON h.symbol = latest.symbol 
+            AND h.date = latest.max_date
+        WHERE p.userId = ?
+    ";
+    $stmt = $pdo->prepare($sql);
+    $stmt->execute([$userId]);
+    $result = $stmt->fetchAll(PDO::FETCH_ASSOC);
+    $pdo = null;
+    return $result;
+}
+
+function getUserPortfolioSummary($userId) {
+    $pdo = getPDO();
+    $sql = "
+        SELECT 
+            COUNT(DISTINCT p.symbol) AS company_count,
+            SUM(p.amount) AS total_shares,
+            SUM(p.amount * h.close) AS total_value
+        FROM portfolio p
+        JOIN (
+            SELECT symbol, MAX(date) AS max_date
+            FROM history
+            GROUP BY symbol
+        ) latest ON p.symbol = latest.symbol
+        JOIN history h 
+            ON h.symbol = latest.symbol 
+            AND h.date = latest.max_date
+        WHERE p.userId = ?
+    ";
+    $stmt = $pdo->prepare($sql);
+    $stmt->execute([$userId]);
+    $result = $stmt->fetch(PDO::FETCH_ASSOC);
+    $pdo = null;
+    return $result;
+}
+
 ?>
