@@ -19,5 +19,12 @@
     </div>
   </nav>
 
+  <h1>APIs Tester</h1>
+  <ul>
+    <li><a href="api/companies.php">All Companies</a></li>
+    <li><a href="api/companies.php?ref=ads">Specific company (ADS used in this example link)</a></li>
+    <li><a href="api/portfolio.php?ref=8">Portfolio for User 8</a></li>
+    <li><a href="api/history.php?ref=ADS">History for Company ADS</a></li>
+  </ul>
 </body>
 </html>
